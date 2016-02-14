@@ -1,0 +1,11 @@
+0=adult_penguin.png
+1=cyborg_penguin.png
+2=baby_penguin.png
+3=spider_penguin.png
+4=bishop_penguin.png
+5=giant_penguin.png
+6=walrus.png
+7=cyborg_walrus.png
+8=mutant_penguin.png
+9=walrus_penguin.png
+10=
