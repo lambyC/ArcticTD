@@ -7,6 +7,8 @@
 #include "TextureManager.h"
 #include "Button.h"
 #include "Wave.h"
+#include "Text.h"
+#include "TextManager.h"
 
 class Game
 {
@@ -18,8 +20,11 @@ class Game
 		enum PlayerState { HoldingTower, DoingNothing };
 
 		void start();
+
 		void handle_events();
+		void update_wave();
 		void update_game();
+
 		void draw_game(sf::RenderWindow&);
 
 		bool isExiting(){ return _isExiting; };
@@ -28,17 +33,21 @@ class Game
 
 		bool _isExiting;
 
+		//Individual objects
 		VisibleObject* _map;
 		VisibleObject* _ui;
 
-		//Controling the flow of the game
+		//Managers and controllers
 		ObjectManager* _objectManager;
 		ObjectManager* _buttonManager;
+
+		TextManager* _textManager;
 
 		TextureManager* _textures;
 
 		Wave* _wave;
 
+		//Window
 		sf::RenderWindow _mainWindow;
 
 		//States
