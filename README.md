@@ -1,7 +1,7 @@
 # ArcticTD
 Tower Defence, C++
 
-Arctic themed tower defence game.
+Arctic themed tower defence game, using SFML engine.
 
 Create tower. Upgrade towers by placeing new tower onto existing towers. 
 Combining the stats of both towers and unlock abilities with right combinations.
