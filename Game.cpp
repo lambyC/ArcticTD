@@ -10,7 +10,6 @@ Game::Game()
 
 }
 
-
 void Game::start()
 {
 	//game is not already running
@@ -22,7 +21,10 @@ void Game::start()
 	//managers
 	_objectManager = new ObjectManager();
 	_buttonManager = new ObjectManager();
-
+	
+	_enemyManager = new ObjectManager();
+	_towerManager = new ObjectManager();
+	
 	_textManager = new TextManager();
 
 	_wave = new Wave();
@@ -75,7 +77,7 @@ void Game::start()
 	sf::Int32 waveTicReady = _gTime->getElapsedTime().asMilliseconds();
 
 	//Game speed
-	const int TPS = 30;
+	const int TPS = 100;
 	const int SKIP_TICKS =  1000 / TPS;
 	const int MAX_FRAME_SKIP = 10;
 
@@ -100,13 +102,20 @@ void Game::start()
 				waveTicReady += 1000;
 			}
 
+			if(_wave->isSpawnRead())
+			{
+				cout << "spawn" << endl;
+				createEnemy();
+				_wave->setNextSpawn(5);
+			}
+
 			update_game();
 
 		}
 		next_game_tic += SKIP_TICKS;
 		loops++;
 	}
-	_mainWindow.clear();
+		_mainWindow.clear();
 
 		draw_game(_mainWindow);
 
@@ -117,22 +126,22 @@ void Game::start()
 
 void Game::update_wave()
 {
-	//Game controls most of the wave flow, as to make it easier to other events.
+	//Game controls most of the wave flow, as to make it easier to handle events in order.
 	if(_wave->isOn()){
 		_wave->tic();
-		if(_wave->isSpawnReady()){
-			//Spawn Enemy
-		}
-		if(_wave->getTime() == 0){
+		if(_wave->getTime() <= 0){
 			_buttonManager->getObject("startB")->
 				setTextureRect(sf::IntRect(0, 240, 179, 54));
+			_wave->stop();
 		}
 	}
+
 }
 
 void Game::update_game()
 {
 	_textManager->updateAll();
+	_enemyManager->updateAll(_gTime->getElapsedTime());
 }
 
 void Game::handle_events()
@@ -200,6 +209,7 @@ void Game::draw_game(sf::RenderWindow& rw)
 			_map->draw(rw);
 
 			_objectManager->drawAll(rw);
+			_enemyManager->drawAll(rw);
 
 			_ui->draw(rw);
 
@@ -216,7 +226,21 @@ void Game::draw_game(sf::RenderWindow& rw)
 	}
 };
 
+void Game::createEnemy()
+{
+	const std::string key = to_string(_enemyNr);
+	Enemy::EnemyType type = (Enemy::EnemyType) _wave->getEnemyType();
 
+	Enemy* en = new Enemy(type, *_textures, key, _gTime->getElapsedTime());
+	_enemyManager->add(key, en);
+	en->setMovementPath(_path);
+	en->setSpawnLocation();
+
+	//Set delay untill nextg spawn
+	_wave->setNextSpawn(en->getSpawnDelay());
+
+	_enemyNr++;
+}
 
 int main()
 {

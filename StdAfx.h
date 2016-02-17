@@ -20,4 +20,6 @@
 #include <cstdlib>
 #include <algorithm>
 
+#include "predicates.h"
+
 #endif

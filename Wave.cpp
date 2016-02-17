@@ -1,13 +1,17 @@
 #include "Wave.h"
 
+using namespace std;
+
 Wave::Wave()
 	:_isOn(false),
 	_time(60),
-	_time_to_next_spawn(0),
-	_level(0)
+	_timeToNextSpawn(5),
+	_level(0),
+	_spawnNr(0)
 {
 	_strLevel = getLevelstr();
 	_strTime = getTimestr();
+	_waveSpawnVec = loadWaveSpawnVec(_level);
 }
 
 Wave::~Wave()
@@ -23,19 +27,27 @@ void Wave::start()
 void Wave::stop()
 {
 	_isOn = false;
+	prepare_next_wave();
 }
 
 void Wave::prepare_next_wave()
 {
 	_time = 60;
+	_spawnNr = 0;
 
 	_level += 1;
 	_strLevel = getLevelstr();
+	_waveSpawnVec = loadWaveSpawnVec(_level);
 }
 
 void Wave::setNextSpawn(const int& i)
 {
-	_time_to_next_spawn += i;
+	_timeToNextSpawn += i;
+}
+
+bool Wave::isSpawnRead()
+{
+	return (60 - _time) > _timeToNextSpawn ? true : false;
 }
 
 int Wave::tic()
@@ -46,20 +58,44 @@ int Wave::tic()
 	return _time;
 }
 
-bool Wave::isSpawnReady()
+vector<int> Wave::loadWaveSpawnVec(const int& key)
 {
-	if((60 - _time) > _time_to_next_spawn)
-		return true;
-	return false;
+	std::ifstream inFile("resources/config/WaveConfig.txt");
+	std::string line;
+	std::vector<int> retVec;
+	while(std::getline(inFile, line)){
+		std::istringstream isline(line);
+		std::string::size_type mid = line.find("=");
+		//find line which corresponds to the level
+		if(line.substr(0, mid) == std::to_string(_level)){
+			//everything past the "=" sign
+			std::string data = line.substr(mid + 1, line.size());
+			typedef std::string::iterator iter;
+			iter i = data.begin();
+			//push back all values in the line
+			while(i != data.end()){
+				i = std::find_if_not(i, data.end(), isComma);
+				iter j = std::find_if(i , data.end(), isComma);
+				if(i != data.end()){
+					retVec.push_back(std::atoi(std::string(i, j).c_str()));
+					i = j;
+				}
+			}
+			return retVec;
+		}
+	}
+	cout << key << "No key in wave spawn config file" << endl;
+	throw;
 }
+
 
 std::string Wave::getTimestr()
 {
-	return std::to_string(_time);
+	return to_string(_time);
 }
 
 std::string Wave::getLevelstr()
 {
-	return std::to_string(_level);
+	return to_string(_level);
 }
 

@@ -6,7 +6,6 @@
 #include <dirent.h>
 #include <sys/types.h>
 
-bool isbackslash(const char&);
 std::vector<std::string> split_backslash(const std::string&);
 std::vector<std::string> fill_vec_filepath(const char*);
 

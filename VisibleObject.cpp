@@ -31,7 +31,7 @@ void VisibleObject::draw(sf::RenderWindow& rw)
 	rw.draw(_sprite);
 }
 
-void VisibleObject::update()
+void VisibleObject::update(sf::Time)
 {
 }
 

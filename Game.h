@@ -9,6 +9,7 @@
 #include "Wave.h"
 #include "Text.h"
 #include "TextManager.h"
+#include "Enemy.h"
 
 class Game
 {
@@ -24,11 +25,15 @@ class Game
 		void handle_events();
 		void update_wave();
 		void update_game();
-
 		void draw_game(sf::RenderWindow&);
+
+		void createTower();
+		void createEnemy();
 
 		bool isExiting(){ return _isExiting; };
 
+		//clocks
+		sf::Clock* _gTime;
 	private:
 
 		bool _isExiting;
@@ -41,10 +46,18 @@ class Game
 		ObjectManager* _objectManager;
 		ObjectManager* _buttonManager;
 
+		ObjectManager* _enemyManager;
+		ObjectManager* _towerManager;
+
 		TextManager* _textManager;
 
 		TextureManager* _textures;
 
+		//Tower/Enemy count for naming key's.
+		int _towerNr;
+		int _enemyNr;
+
+		//Wave
 		Wave* _wave;
 
 		//Window
@@ -54,11 +67,12 @@ class Game
 		GameState _gameState;
 		PlayerState _playerState;
 
-		//clocks
-		sf::Clock* _gTime;
 
 		//Player targets
 		Button* _targetButton;
+
+		//TODO make conf file reader for the path, depending on map chosen
+		std::vector<sf::Vector2f> _path = { sf::Vector2f(-51, 480), sf::Vector2f(350, 480), sf::Vector2f(350, 180), sf::Vector2f(850, 180) };
 
 };
 

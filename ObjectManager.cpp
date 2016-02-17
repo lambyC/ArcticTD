@@ -26,6 +26,15 @@ void ObjectManager::remove(std::string key)
 	}
 }
 
+void ObjectManager::updateAll(sf::Time elapsedTime)
+{
+	std::map<std::string, VisibleObject*>::iterator iter = _objects.begin();
+	while(iter != _objects.end()){
+		iter->second->update(elapsedTime);
+		iter++;
+	}
+}
+
 void ObjectManager::drawAll(sf::RenderWindow& rw)
 {
 	std::map<std::string, VisibleObject*>::iterator iter = _objects.begin();

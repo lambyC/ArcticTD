@@ -13,7 +13,7 @@ class VisibleObject
 		void load(sf::Texture, sf::IntRect);
 
 		void draw(sf::RenderWindow&);
-		virtual void update();
+		virtual void update(sf::Time);
 
 		bool inSprite(float x, float y);
 		bool inSprite(float x1, float y1, float x2, float y2);

@@ -13,8 +13,8 @@ class ObjectManager
 		void add(std::string key, VisibleObject* object);
 		void remove(std::string);
 
+		void updateAll(sf::Time);
 		void drawAll(sf::RenderWindow&);
-		void updateAll();
 
 		VisibleObject* inSpriteAll(float x, float y);
 		VisibleObject* inSpriteAll(float x1, float y1, float x2, float y2);
