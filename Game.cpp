@@ -102,11 +102,9 @@ void Game::start()
 				waveTicReady += 1000;
 			}
 
-			if(_wave->isSpawnRead())
-			{
-				cout << "spawn" << endl;
-				createEnemy();
-				_wave->setNextSpawn(5);
+			if(_wave->isSpawnRead()){
+					cout << "spawn"<< _wave->getSpawnNr() << endl;
+					createEnemy();
 			}
 
 			update_game();
@@ -236,7 +234,7 @@ void Game::createEnemy()
 	en->setMovementPath(_path);
 	en->setSpawnLocation();
 
-	//Set delay untill nextg spawn
+	//Set delay for next spawn
 	_wave->setNextSpawn(en->getSpawnDelay());
 
 	_enemyNr++;

@@ -63,7 +63,6 @@ class Enemy : public VisibleObject
 		int _health;
 		int _speed;
 		int _spawnDelay;
-
 };
 
 #endif

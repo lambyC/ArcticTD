@@ -22,6 +22,7 @@ class Wave
 		int getTime() { return _time; };
 		int getTimeToNextSpawn() { return _timeToNextSpawn; };
 		int getEnemyType() { return _waveSpawnVec[_spawnNr]; };
+		int getSpawnNr() { return _spawnNr; };
 
 		std::vector<int> loadWaveSpawnVec(const int&);
 

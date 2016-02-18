@@ -13,8 +13,14 @@ Enemy::Enemy(EnemyType type, TextureManager& textures,const string& key, sf::Tim
 	loadEnemyStatsFromFile(type);
 	loadEnemyTextureFromFile(textures);
 
-	_size = sf::IntRect(0,0,50,50);
-	_frame = sf::IntRect(0,0,50,50);
+	if((int)type % 5 == 0 && (int)type != 0){
+		_size = sf::IntRect(0,0,80,80);
+		_frame = sf::IntRect(0,0,80,80);
+	}
+	else{
+		_size = sf::IntRect(0,0,50,50);
+		_frame = sf::IntRect(0,0,50,50);
+	}
 
 	_sprite.setTextureRect(_size);
 
@@ -98,8 +104,8 @@ void Enemy::loadEnemyStatsFromFile(const EnemyType& type)
 	ifstream inFile("resources/config/EnemyStatsConfig.txt");
 	string line;
 	//vector of all stats, so to loop through them each
-	vector<int> statsVect = {_health, _speed, _spawnDelay};
-	vector<int>::size_type vec_i = 0;
+	int stats[3];
+	int ar_i = 0;
 	while(getline(inFile, line)){
 		istringstream isline(line);
 		string::size_type mid = line.find("=");
@@ -111,14 +117,19 @@ void Enemy::loadEnemyStatsFromFile(const EnemyType& type)
 			while(i != data.end()){
 				i = find_if_not(i, data.end(), isComma);
 				iter j = find_if(i , data.end(), isComma);
-				if(i != data.end() && vec_i != 3){
-					statsVect[vec_i] = atoi(string(i, j).c_str());
+				if(i != data.end() && ar_i != 3){
+					stats[ar_i++] = atoi(string(i, j).c_str());
 					i = j;
 				}
 			}
+			
+			_health = stats[0];
+			_initialHealth = stats[0];
+			_speed = stats[1];
+			_spawnDelay = stats[2];
+
 			inFile.close();
 			inFile.clear();
-			_initialHealth = _health;
 			return;
 		}
 	}

@@ -38,11 +38,13 @@ void Wave::prepare_next_wave()
 	_level += 1;
 	_strLevel = getLevelstr();
 	_waveSpawnVec = loadWaveSpawnVec(_level);
+	_timeToNextSpawn = 5;
 }
 
 void Wave::setNextSpawn(const int& i)
 {
 	_timeToNextSpawn += i;
+	_spawnNr += 1;
 }
 
 bool Wave::isSpawnRead()
@@ -60,12 +62,12 @@ int Wave::tic()
 
 vector<int> Wave::loadWaveSpawnVec(const int& key)
 {
-	std::ifstream inFile("resources/config/WaveConfig.txt");
-	std::string line;
-	std::vector<int> retVec;
+	ifstream inFile("resources/config/WaveConfig.txt");
+	string line;
+	vector<int> retVec;
 	while(std::getline(inFile, line)){
-		std::istringstream isline(line);
-		std::string::size_type mid = line.find("=");
+		istringstream isline(line);
+		string::size_type mid = line.find("=");
 		//find line which corresponds to the level
 		if(line.substr(0, mid) == std::to_string(_level)){
 			//everything past the "=" sign
@@ -81,6 +83,11 @@ vector<int> Wave::loadWaveSpawnVec(const int& key)
 					i = j;
 				}
 			}
+			typedef vector<int>::size_type it;
+			for(it i = 0; i != retVec.size();i++){
+				cout << retVec[i] << ",";
+			}
+			putchar('\n');
 			return retVec;
 		}
 	}
