@@ -140,6 +140,7 @@ void Game::update_game()
 {
 	_textManager->updateAll();
 	_enemyManager->updateAll(_gTime->getElapsedTime());
+	_towerManager->updateAll(_gTime->getElapsedTime());
 }
 
 void Game::handle_events()
@@ -151,9 +152,6 @@ void Game::handle_events()
 	if(event.type == sf::Event::KeyPressed){
 		if(event.key.code == sf::Keyboard::M){
 			_gameState = MenuScreen;
-		}
-		if(event.key.code == sf::Keyboard::Escape){
-			_playerState = DoingNothing;
 		}
 	}
 	switch(_playerState)
@@ -184,15 +182,39 @@ void Game::handle_events()
 						_buttonManager->getObject("startB")->
 							setTextureRect(sf::IntRect(0, 240+54, 179, 54));
 					}
+					else {
+						if(_targetButton->_action != Button::Start){
+							string key = createTower((int)_targetButton->_action);
+							_holdingTower = (Tower*)_towerManager->getObject(key);
+							_playerState = Game::HoldingTower;
+						}
+
+					}
 				}
 			}
 			break;
 		}
 		case HoldingTower :
 		{
-			break;
+			if(event.type == sf::Event::KeyPressed){
+				if(event.key.code == sf::Keyboard::Escape){
+					_towerManager->remove(_holdingTower->getKey());
+					_holdingTower = NULL;
+					_playerState = Game::DoingNothing;
+					break;
+				}
+			}
+			if(event.type == sf::Event::MouseButtonPressed){
+				if(_map->inSprite(event.mouseButton.x, event.mouseButton.y)){
+					_holdingTower->place();
+					_holdingTower = NULL;
+					_targetButton->changeColour(sf::Color(255,255,255));
+					_playerState = Game::DoingNothing;
+				}
+			}
 		}
-	}
+		break;
+		}
 	}
 };
 
@@ -208,6 +230,7 @@ void Game::draw_game(sf::RenderWindow& rw)
 
 			_objectManager->drawAll(rw);
 			_enemyManager->drawAll(rw);
+			_towerManager->drawAll(rw);
 
 			_ui->draw(rw);
 
@@ -238,6 +261,16 @@ void Game::createEnemy()
 	_wave->setNextSpawn(en->getSpawnDelay());
 
 	_enemyNr++;
+}
+
+std::string Game::createTower(int i)
+{
+	const string key = "tower"+to_string(_towerNr++);
+	cout << key << endl;
+	Tower* tower = new Tower(i , *_textures, key);
+	_towerManager->add(key, tower);
+
+	return key;
 }
 
 int main()

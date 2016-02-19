@@ -10,6 +10,7 @@
 #include "Text.h"
 #include "TextManager.h"
 #include "Enemy.h"
+#include "Tower.h"
 
 class Game
 {
@@ -27,7 +28,7 @@ class Game
 		void update_game();
 		void draw_game(sf::RenderWindow&);
 
-		void createTower();
+		std::string createTower(int);
 		void createEnemy();
 
 		bool isExiting(){ return _isExiting; };
@@ -70,6 +71,7 @@ class Game
 
 		//Player targets
 		Button* _targetButton;
+		Tower* _holdingTower;
 
 		//TODO make conf file reader for the path, depending on map chosen
 		std::vector<sf::Vector2f> _path = { sf::Vector2f(-51, 480), sf::Vector2f(350, 480), sf::Vector2f(350, 180), sf::Vector2f(850, 180) };

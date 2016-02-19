@@ -27,6 +27,8 @@ class VisibleObject
 		sf::Vector2f getPosition();
 		sf::Vector2f getCenterPosition();
 
+		std::string getKey() { return _key; };
+
 	protected:
 		sf::Sprite _sprite;
 		std::string _key;
