@@ -146,7 +146,7 @@ void Game::update_turret()
 		sf::Vector2f pos = Titer->second->getPosition();
 		VisibleObject* result = _enemyManager->inRadiusAll(pos.x, pos.y, ((Tower*)Titer->second)->getRadius());
 		if(result != NULL){
-			if(!((Tower*)result)->isFiring()){
+			if(!((Tower*)Titer->second)->isFiring()){
 				((Tower*)Titer->second)->fire(_gTime->getElapsedTime());
 			}
 		}
