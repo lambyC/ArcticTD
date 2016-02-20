@@ -23,26 +23,32 @@ class Tower : public VisibleObject
 		Tower(int type, TextureManager& textures, std::string key);
 
 		void update(sf::Time);
-		void fire();
+		void fire(sf::Time);
 
 		void loadFromBaseType(TextureManager& textures);
 		void setStatsFromType(int);
 		void place() { _isPlaced = true; };
+		void placing(sf::RenderWindow&);
 
 		TowerType getNewTowerType(TowerType base, TowerType upg);
 
 		//checkers
 		bool isPlaced() { return _isPlaced; };
+		bool isFiring() { return _isFiring; };
 		bool isInRange();
+
+		float getRadius() { return _radius; };
 
 	private:
 		bool _isPlaced;
+		bool _isFiring;
 
-		//Clock to determin when shots can be fired
-		sf::Clock _fClock;
+		//Time to determine firerate
+		sf::Int32 _fireTime;
+		sf::Int32 _frameTime;
 
 		//Stats
-		int _radius;
+		float _radius;
 		int _dmg;
 		int _fireRate;
 

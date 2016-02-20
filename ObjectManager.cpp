@@ -68,6 +68,18 @@ VisibleObject* ObjectManager::inSpriteAll(float x1, float y1, float x2, float y2
 	return NULL;
 }
 
+VisibleObject* ObjectManager::inRadiusAll(float x1, float y1, float r)
+{
+	std::map<std::string, VisibleObject*>::iterator iter = _objects.begin();
+	while(iter != _objects.end()){
+		if(iter->second->inRadiusOf(x1, y1, r)){
+			return iter->second;
+		}
+		iter++;
+	}
+	return NULL;
+}
+
 int ObjectManager::getObjectCount()
 {
 	return _objects.size();

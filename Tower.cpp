@@ -5,6 +5,7 @@ using namespace std;
 Tower::Tower(int type, TextureManager& textures, string key)
 	:
 	_isPlaced(false),
+	_isFiring(false),
 	_type((TowerType)type),
 	_shotNr(0)
 {
@@ -12,10 +13,6 @@ Tower::Tower(int type, TextureManager& textures, string key)
 	loadFromBaseType(textures);
 	_sprite.setTextureRect(sf::IntRect(0, 0, 50, 64));
 	setStatsFromType(type);
-}
-
-void Tower::fire()
-{
 }
 
 bool Tower::isInRange()
@@ -26,12 +23,34 @@ bool Tower::isInRange()
 
 void Tower::update(sf::Time elapsedTime)
 {
-	if(!isPlaced()){
-		sf::Vector2i mousePos = sf::Mouse::getPosition();
-		_sprite.setPosition(mousePos.x - 470, mousePos.y - 180);
-		return;
+
+	if(isFiring()){
+		if(elapsedTime.asMilliseconds() > _fireTime){
+			_isFiring = false;
+			cout << _key << "--"<< _shotNr << endl;
+			_shotNr++;
+		}
 	}
 
+	if(isFiring()){
+		if(elapsedTime.asMilliseconds() > _frameTime){
+		}
+	}
+}
+
+void Tower::placing(sf::RenderWindow& rw){
+	if(!isPlaced()){
+		sf::Vector2i mousePos = sf::Mouse::getPosition(rw);
+		_sprite.setPosition(mousePos.x, mousePos.y);
+		return;
+	}
+}
+
+void Tower::fire(sf::Time elapsedTime)
+{
+	_isFiring = true;
+	_fireTime = elapsedTime.asMilliseconds() + _fireRate;
+	_frameTime = elapsedTime.asMilliseconds();
 }
 
 void Tower::loadFromBaseType(TextureManager& textures)

@@ -57,7 +57,10 @@ bool VisibleObject::inSprite(float x1, float y1, float x2, float y2)
 
 bool VisibleObject::inRadiusOf(float x, float y, float r)
 {
-	if(sqrt(pow(x,2) + pow(y,2)) <= r)
+	sf::Vector2f pos = _sprite.getPosition();
+	float dx = pos.x - x;
+	float dy = pos.y - y;
+	if(sqrt(pow(dx,2) + pow(dy,2)) <= r)
 		return true;
 	return false;
 }

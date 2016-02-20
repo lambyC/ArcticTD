@@ -25,6 +25,7 @@ class Game
 
 		void handle_events();
 		void update_wave();
+		void update_turret();
 		void update_game();
 		void draw_game(sf::RenderWindow&);
 

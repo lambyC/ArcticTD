@@ -96,6 +96,10 @@ void Game::start()
 
 			handle_events();
 
+			if(_holdingTower != NULL){
+				_holdingTower->placing(_mainWindow);
+			}
+
 			//tic should only occure each second( 1000 milliseconds)
 			if(_gTime->getElapsedTime().asMilliseconds() > waveTicReady){
 				update_wave();
@@ -106,7 +110,7 @@ void Game::start()
 					cout << "spawn"<< _wave->getSpawnNr() << endl;
 					createEnemy();
 			}
-
+			update_turret();
 			update_game();
 
 		}
@@ -134,6 +138,19 @@ void Game::update_wave()
 		}
 	}
 
+}
+
+void Game::update_turret()
+{
+	for(auto Titer = _towerManager->begin(); Titer != _towerManager->end(); Titer++){
+		sf::Vector2f pos = Titer->second->getPosition();
+		VisibleObject* result = _enemyManager->inRadiusAll(pos.x, pos.y, ((Tower*)Titer->second)->getRadius());
+		if(result != NULL){
+			if(!((Tower*)result)->isFiring()){
+				((Tower*)Titer->second)->fire(_gTime->getElapsedTime());
+			}
+		}
+	}
 }
 
 void Game::update_game()

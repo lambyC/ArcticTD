@@ -23,6 +23,9 @@ class ObjectManager
 		int getObjectCount();
 		VisibleObject* getObject(const std::string&);
 
+		std::map<std::string, VisibleObject*>::iterator begin() { return _objects.begin(); };
+		std::map<std::string, VisibleObject*>::iterator end() { return _objects.end(); };
+
 	private:
 		std::map<std::string, VisibleObject*> _objects;
 
