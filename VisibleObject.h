@@ -24,7 +24,7 @@ class VisibleObject
 		bool isAlive() { return _isAlive; };
 
 		void setPosition(float x, float y);
-		void setCenterPosition(float x, float y);
+		void setCenterOrigin();
 		void setTextureRect(const sf::IntRect&);
 
 		sf::Vector2f getPosition();

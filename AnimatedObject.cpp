@@ -22,7 +22,7 @@ bool AnimatedObject::nextFrame(int speed)
 	//update
 	setTextureRect(_frame);
 	//Add time
-	_frameTime += 100;
+	_frameTime += speed;
 
 	return reachedEnd;
 }

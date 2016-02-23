@@ -47,22 +47,22 @@ void Game::start()
 	//Buttons creation start
 	Button* jonesB = new Button(Button::Jones);
 	jonesB->load(_textures->getTexture("buttons.png"), sf::IntRect(0, 200, 200, 40));
-	jonesB->setCenterPosition(916, 360);
+	jonesB->setPosition(816, 340);
 	_buttonManager->add("jonesB", jonesB);
 
 	Button* krosB = new Button(Button::Kros);
 	krosB->load(_textures->getTexture("buttons.png"), sf::IntRect(0, 160, 200, 40));
-	krosB->setCenterPosition(916, 300);
+	krosB->setPosition(816, 280);
 	_buttonManager->add("krosB", krosB);
 
 	Button* felixB = new Button(Button::Felix);
 	felixB->load(_textures->getTexture("buttons.png"), sf::IntRect(0, 120, 200, 40));
-	felixB->setCenterPosition(916, 240);
+	felixB->setPosition(816, 220);
 	_buttonManager->add("felixB", felixB);
 
 	Button* startB = new Button(Button::Start);
-	startB->load(_textures->getTexture("buttons.png"), sf::IntRect(0, 240, 170, 54));
-	startB->setCenterPosition(924, 727);
+	startB->load(_textures->getTexture("buttons.png"), sf::IntRect(0, 240, 180, 54));
+	startB->setPosition(836, 701);
 	_buttonManager->add("startB", startB);
 	//Buttons creation end
 
@@ -142,13 +142,15 @@ void Game::update_wave()
 
 void Game::update_turret()
 {
-	for(auto Titer = _towerManager->begin(); Titer != _towerManager->end(); Titer++){
-		sf::Vector2f pos = Titer->second->getPosition();
-		VisibleObject* result = _enemyManager->inRadiusAll(pos.x, pos.y, ((Tower*)Titer->second)->getRadius());
+	for(auto iter = _towerManager->begin(); iter != _towerManager->end(); iter++){
+		sf::Vector2f pos = iter->second->getPosition();
+		VisibleObject* result = _enemyManager->inRadiusAll(pos.x, pos.y, ((Tower*)iter->second)->getRadius());
 		if(result != NULL){
-			if(!((Tower*)Titer->second)->isFiring()){
-				((Tower*)Titer->second)->fire(_gTime->getElapsedTime());
-				createProjectile(*((Tower*)Titer->second), (Enemy*)result);
+			if(((Tower*)iter->second)->isPlaced()){
+				if(!((Tower*)iter->second)->isFiring()){
+					((Tower*)iter->second)->fire(_gTime->getElapsedTime());
+					createProjectile(*((Tower*)iter->second), (Enemy*)result);
+				}
 			}
 		}
 	}
@@ -278,6 +280,7 @@ string Game::createEnemy()
 	_enemyManager->add(key, en);
 	en->setMovementPath(_path);
 	en->setSpawnLocation();
+	en->setCenterOrigin();
 
 	//Set delay for next spawn
 	_wave->setNextSpawn(en->getSpawnDelay());
@@ -290,6 +293,7 @@ string Game::createTower(int i)
 {
 	const string key = "tower"+to_string(_towerNr++);
 	Tower* tower = new Tower(i , *_textures, key);
+	tower->setCenterOrigin();
 	_towerManager->add(key, tower);
 	return key;
 }
@@ -298,6 +302,7 @@ string Game::createProjectile(Tower& T, Enemy* E)
 {
 	const string key = "projectile" + to_string(_projNr++);
 	Projectile* pr = new Projectile(key, *_textures , T, E, _gTime->getElapsedTime());
+	pr->setCenterOrigin();
 	_projectileManager->add(key, pr);
 	return key;
 }

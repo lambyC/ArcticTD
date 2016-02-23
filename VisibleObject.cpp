@@ -61,10 +61,11 @@ void VisibleObject::setPosition(float x, float y)
 	_sprite.setPosition(x, y);
 }
 
-void VisibleObject::setCenterPosition(float x, float y)
+void VisibleObject::setCenterOrigin()
 {
-	sf::IntRect bound = _sprite.getTextureRect();
-	_sprite.setPosition(x + (bound.width / 2), y + (bound.height / 2));
+	sf::FloatRect rect = _sprite.getLocalBounds();
+	_sprite.setOrigin((rect.left + rect.width) / 2.0f,
+					  (rect.top + rect.height) / 2.0f);
 }
 
 void VisibleObject::setTextureRect(const sf::IntRect& intRect){

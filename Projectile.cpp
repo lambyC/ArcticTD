@@ -6,7 +6,7 @@ Projectile::Projectile(string key, TextureManager& textures, Tower& tower , Enem
 	:
 	_pState(Traveling),
 	_dmg(tower.getDmg()),
-	_speed(10),
+	_speed(5),
 	_target(enemy)
 {
 	_key = key;
@@ -25,7 +25,7 @@ Projectile::Projectile(string key, TextureManager& textures, Tower& tower , Enem
 	setFrameTime(time.asMilliseconds());
 
 	sf::Vector2f Tpos = tower.getPosition();
-	setPosition(Tpos.x + 32, Tpos.y + 32);
+	setPosition(Tpos.x, Tpos.y);
 	setTextureRect(_size);
 }
 
@@ -45,17 +45,17 @@ void Projectile::update(sf::Time elapsedTime)
 			{
 				if(elapsedTime.asMilliseconds() > _movementTime){
 					move();
-					_movementTime += 1;
+					_movementTime += _speed;
 				}
 				if(elapsedTime.asMilliseconds() > getFrameTime()){
-					nextFrame(_speed);
+					nextFrame(_speed * 10);
 				}
 				break;
 			}
 		case Exploding :
 			{
 				if(elapsedTime.asMilliseconds() > _frameTime){
-					if(nextFrame(_speed)){
+					if(nextFrame(_speed * 5)){
 						_isAlive = false;
 					}
 				}
@@ -77,6 +77,8 @@ void Projectile::move()
 
 	if(abs(dx) < 1 && abs(dy) < 1){
 		_frameRow = Second;
+		_frame.left = 0;
+		_isRight = false;
 		_pState = Exploding;
 		return;
 	}

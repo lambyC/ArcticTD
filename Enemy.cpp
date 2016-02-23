@@ -45,7 +45,7 @@ void Enemy::update(sf::Time elapsedTime)
 	//update _sprite
 	//Move animation forward
 	if(elapsedTime.asMilliseconds() > getFrameTime()){
-		nextFrame(_speed);
+		nextFrame(_speed * 10);
 	}
 
 	//TODO mke more red the more dmg'd the enemy is
@@ -143,6 +143,15 @@ void Enemy::loadEnemyTextureFromFile(TextureManager& textures)
 			inFile.clear();
 			break;
 		}
+	}
+}
+
+void Enemy::damage(int dmg)
+{
+	_health -= dmg;
+	if(_health <= 0)
+	{
+		
 	}
 }
 

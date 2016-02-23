@@ -27,6 +27,8 @@ class Enemy : public AnimatedObject
 		void setSpawnLocation();
 		void setMovementPath(std::vector<sf::Vector2f> path) { _path = path; };
 
+
+		void damage(int);
 		int getSpawnDelay() { return _spawnDelay; };
 
 	private:
