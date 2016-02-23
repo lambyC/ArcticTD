@@ -27,7 +27,6 @@ void Tower::update(sf::Time elapsedTime)
 	if(isFiring()){
 		if(elapsedTime.asMilliseconds() > _fireTime){
 			_isFiring = false;
-			cout << _key << "--"<< _shotNr << endl;
 			_shotNr++;
 		}
 	}

@@ -30,8 +30,14 @@ void ObjectManager::updateAll(sf::Time elapsedTime)
 {
 	std::map<std::string, VisibleObject*>::iterator iter = _objects.begin();
 	while(iter != _objects.end()){
-		iter->second->update(elapsedTime);
-		iter++;
+		if(iter->second->isAlive()){
+			iter->second->update(elapsedTime);
+			iter++;
+		}
+		else{
+			remove(iter->first);
+			return;
+		}
 	}
 }
 

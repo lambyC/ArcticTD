@@ -8,11 +8,6 @@ VisibleObject::VisibleObject()
 
 }
 
-VisibleObject::~VisibleObject()
-{
-
-}
-
 void VisibleObject::load(sf::Texture texture)
 {
 	_texture = texture;
@@ -29,10 +24,6 @@ void VisibleObject::load(sf::Texture texture, sf::IntRect intRect)
 void VisibleObject::draw(sf::RenderWindow& rw)
 {
 	rw.draw(_sprite);
-}
-
-void VisibleObject::update(sf::Time)
-{
 }
 
 bool VisibleObject::inSprite(float x, float y)
@@ -73,7 +64,7 @@ void VisibleObject::setPosition(float x, float y)
 void VisibleObject::setCenterPosition(float x, float y)
 {
 	sf::IntRect bound = _sprite.getTextureRect();
-	_sprite.setPosition(x - (bound.width / 2), y - (bound.height / 2));
+	_sprite.setPosition(x + (bound.width / 2), y + (bound.height / 2));
 }
 
 void VisibleObject::setTextureRect(const sf::IntRect& intRect){

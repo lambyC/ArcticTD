@@ -4,12 +4,14 @@ using namespace std;
 
 Enemy::Enemy(EnemyType type, TextureManager& textures,const string& key, sf::Time time)
 	:_point(1),
-	_isAlive(true),
-	_maxFrames(2),
-	_isRight(false),
-	_type(type),
-	_key(key)
+	_type(type)
 {
+	_key = key;
+	_isAlive = true;
+	_maxFrames = 2;
+	_isRight = false;
+
+
 	loadEnemyStatsFromFile(type);
 	loadEnemyTextureFromFile(textures);
 
@@ -25,7 +27,8 @@ Enemy::Enemy(EnemyType type, TextureManager& textures,const string& key, sf::Tim
 	_sprite.setTextureRect(_size);
 
 	_moveTime = time.asMilliseconds();
-	_frameTime = time.asMilliseconds();
+
+	setFrameTime(time.asMilliseconds());
 }
 
 Enemy::~Enemy()
@@ -37,22 +40,12 @@ void Enemy::update(sf::Time elapsedTime)
 {
 	if(elapsedTime.asMilliseconds() > _moveTime){
 		move();
-		_moveTime += 10;
+		_moveTime += 40;
 	}
 	//update _sprite
 	//Move animation forward
-	if(elapsedTime.asMilliseconds() > _frameTime){
-		//Check if at either end of Animation
-		if(_frame.left == _size.width * _maxFrames || _frame.left == 0)
-			_isRight = _isRight ? false : true;
-		//move frame according to direction
-		_frame.left += _isRight ? _size.width : - _size.width;
-		//Check direction
-		_frame.top = _size.height * (int)_direction;
-		//update
-		_sprite.setTextureRect(_frame);
-		//Add time
-		_frameTime += 100;
+	if(elapsedTime.asMilliseconds() > getFrameTime()){
+		nextFrame(_speed);
 	}
 
 	//TODO mke more red the more dmg'd the enemy is
@@ -72,7 +65,7 @@ void Enemy::move()
 	//Get fastest way to the point
 	float hyp = std::sqrt(std::pow(dx,2) + std::pow(dy,2));
 	//if at point move to next point
-	if(dx ==  0 && dy == 0){
+	if(abs(dx) < 2 && abs(dy) < 2){
 		//if at last point kill enemy, + 1 since size() max value
 		if(_point + 1 == (int)_path.size())
 			kill();
@@ -82,21 +75,21 @@ void Enemy::move()
 		return;
 	}
 	//give enemy its new coordinates
-	float nx = cpos.x + 1 * (dx/hyp);
-	float ny = cpos.y + 1 * (dy/hyp);
+	float nx = cpos.x + 2 * (1 * (dx/hyp));
+	float ny = cpos.y + 2 * (1 * (dy/hyp));
 
 	setPosition(nx, ny);
 
 	//check direction,
 	if(abs(dx) > abs(dy))
-		_direction = Right;
+		_frameRow = First;
 	else
-		_direction = Up;
+		_frameRow = Second;
 }
 
 void Enemy::kill()
 {
-
+	_isAlive = false;
 }
 
 void Enemy::loadEnemyStatsFromFile(const EnemyType& type)

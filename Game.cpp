@@ -24,6 +24,7 @@ void Game::start()
 	
 	_enemyManager = new ObjectManager();
 	_towerManager = new ObjectManager();
+	_projectileManager = new ObjectManager();
 	
 	_textManager = new TextManager();
 
@@ -77,9 +78,9 @@ void Game::start()
 	sf::Int32 waveTicReady = _gTime->getElapsedTime().asMilliseconds();
 
 	//Game speed
-	const int TPS = 100;
+	const int TPS = 200;
 	const int SKIP_TICKS =  1000 / TPS;
-	const int MAX_FRAME_SKIP = 10;
+	const int MAX_FRAME_SKIP = 5;
 
 	sf::Int32 next_game_tic = _gTime->getElapsedTime().asMilliseconds();
 	int loops;
@@ -107,10 +108,9 @@ void Game::start()
 			}
 
 			if(_wave->isSpawnRead()){
-					cout << "spawn"<< _wave->getSpawnNr() << endl;
 					createEnemy();
 			}
-			update_turret();
+
 			update_game();
 
 		}
@@ -148,6 +148,7 @@ void Game::update_turret()
 		if(result != NULL){
 			if(!((Tower*)Titer->second)->isFiring()){
 				((Tower*)Titer->second)->fire(_gTime->getElapsedTime());
+				createProjectile(*((Tower*)Titer->second), (Enemy*)result);
 			}
 		}
 	}
@@ -158,6 +159,9 @@ void Game::update_game()
 	_textManager->updateAll();
 	_enemyManager->updateAll(_gTime->getElapsedTime());
 	_towerManager->updateAll(_gTime->getElapsedTime());
+	_projectileManager->updateAll(_gTime->getElapsedTime());
+
+	update_turret();
 }
 
 void Game::handle_events()
@@ -248,6 +252,7 @@ void Game::draw_game(sf::RenderWindow& rw)
 			_objectManager->drawAll(rw);
 			_enemyManager->drawAll(rw);
 			_towerManager->drawAll(rw);
+			_projectileManager->drawAll(rw);
 
 			_ui->draw(rw);
 
@@ -264,9 +269,9 @@ void Game::draw_game(sf::RenderWindow& rw)
 	}
 };
 
-void Game::createEnemy()
+string Game::createEnemy()
 {
-	const std::string key = to_string(_enemyNr);
+	const std::string key = "enemy" + to_string(_enemyNr);
 	Enemy::EnemyType type = (Enemy::EnemyType) _wave->getEnemyType();
 
 	Enemy* en = new Enemy(type, *_textures, key, _gTime->getElapsedTime());
@@ -278,17 +283,26 @@ void Game::createEnemy()
 	_wave->setNextSpawn(en->getSpawnDelay());
 
 	_enemyNr++;
-}
-
-std::string Game::createTower(int i)
-{
-	const string key = "tower"+to_string(_towerNr++);
-	cout << key << endl;
-	Tower* tower = new Tower(i , *_textures, key);
-	_towerManager->add(key, tower);
-
 	return key;
 }
+
+string Game::createTower(int i)
+{
+	const string key = "tower"+to_string(_towerNr++);
+	Tower* tower = new Tower(i , *_textures, key);
+	_towerManager->add(key, tower);
+	return key;
+}
+
+string Game::createProjectile(Tower& T, Enemy* E)
+{
+	const string key = "projectile" + to_string(_projNr++);
+	Projectile* pr = new Projectile(key, *_textures , T, E, _gTime->getElapsedTime());
+	_projectileManager->add(key, pr);
+	return key;
+}
+
+
 
 int main()
 {

@@ -38,6 +38,7 @@ class Tower : public VisibleObject
 		bool isInRange();
 
 		float getRadius() { return _radius; };
+		float getDmg() { return _dmg; };
 
 	private:
 		bool _isPlaced;

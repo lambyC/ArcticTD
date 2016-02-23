@@ -26,8 +26,10 @@ class ObjectManager
 		std::map<std::string, VisibleObject*>::iterator begin() { return _objects.begin(); };
 		std::map<std::string, VisibleObject*>::iterator end() { return _objects.end(); };
 
-	private:
+	protected:
 		std::map<std::string, VisibleObject*> _objects;
+
+	private:
 
 		struct Deallocator
 		{

@@ -11,6 +11,7 @@
 #include "TextManager.h"
 #include "Enemy.h"
 #include "Tower.h"
+#include "Projectile.h"
 
 class Game
 {
@@ -29,8 +30,10 @@ class Game
 		void update_game();
 		void draw_game(sf::RenderWindow&);
 
+		std::string createEnemy();
 		std::string createTower(int);
-		void createEnemy();
+		std::string createProjectile(Tower&, Enemy*);
+
 
 		bool isExiting(){ return _isExiting; };
 
@@ -50,6 +53,7 @@ class Game
 
 		ObjectManager* _enemyManager;
 		ObjectManager* _towerManager;
+		ObjectManager* _projectileManager;
 
 		TextManager* _textManager;
 
@@ -58,6 +62,7 @@ class Game
 		//Tower/Enemy count for naming key's.
 		int _towerNr;
 		int _enemyNr;
+		int _projNr;
 
 		//Wave
 		Wave* _wave;
