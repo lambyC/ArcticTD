@@ -56,6 +56,7 @@ void Projectile::update(sf::Time elapsedTime)
 			{
 				if(elapsedTime.asMilliseconds() > _frameTime){
 					if(nextFrame(_speed * 5)){
+						_target->damage(_dmg);
 						_isAlive = false;
 					}
 				}

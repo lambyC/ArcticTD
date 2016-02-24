@@ -8,11 +8,11 @@ bool AnimatedObject::nextFrame(int speed)
 	//made for death animation.
 	bool reachedEnd = false;
 
-	if(_frame.left == _size.width * _maxFrames ){
+	if(_frame.left == _size.width * (_maxFrames - 1)){
 		reachedEnd = true;
 	}
 	//Check if at either end of Animation
-	if(_frame.left == _size.width * _maxFrames || _frame.left == 0){
+	if(_frame.left == _size.width * (_maxFrames - 1)|| _frame.left == 0){
 		_isRight = _isRight ? false : true;
 	}
 	//move frame according to direction

@@ -4,13 +4,13 @@ using namespace std;
 
 Enemy::Enemy(EnemyType type, TextureManager& textures,const string& key, sf::Time time)
 	:_point(1),
+	_eState(Alive),
 	_type(type)
 {
 	_key = key;
 	_isAlive = true;
 	_maxFrames = 2;
 	_isRight = false;
-
 
 	loadEnemyStatsFromFile(type);
 	loadEnemyTextureFromFile(textures);
@@ -38,21 +38,42 @@ Enemy::~Enemy()
 
 void Enemy::update(sf::Time elapsedTime)
 {
-	if(elapsedTime.asMilliseconds() > _moveTime){
-		move();
-		_moveTime += 40;
-	}
-	//update _sprite
-	//Move animation forward
-	if(elapsedTime.asMilliseconds() > getFrameTime()){
-		nextFrame(_speed * 10);
+	switch(_eState)
+	{
+		case Alive :
+			{
+				if(elapsedTime.asMilliseconds() > _moveTime){
+					move();
+					_moveTime += 40;
+				}
+				if(elapsedTime.asMilliseconds() > getFrameTime()){
+					nextFrame(_speed * 10);
+				}
+				if(_health <= 0){
+					_isAlive = false;
+				}
+				//make more red the more dmg'd the enemy is
+				float procent = _health / _initialHealth;
+				float c = 255 * procent;
+
+				_sprite.setColor(sf::Color(255, c, c));
+
+				break;
+			}
+		case Action :
+			{
+
+				break;
+			}
+		case Dying :
+			{
+				if(elapsedTime.asMilliseconds() > getFrameTime()){
+					nextFrame(_speed * 10);
+				}
+				break;
+			}
 	}
 
-	//TODO mke more red the more dmg'd the enemy is
-	/*
-	int procent = _health / _initialHp;
-	_sprite.setColor(sf::Color(255, 255 * procent, 255 * procent));
-	*/
 }
 
 void Enemy::move()

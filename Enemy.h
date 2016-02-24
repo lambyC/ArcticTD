@@ -8,6 +8,7 @@
 class Enemy : public AnimatedObject
 {
 	enum Direction { Up, Right, Down, Left };
+	enum Estate { Alive, Action, Dying };
 	public:
 		enum EnemyType
 		{
@@ -36,14 +37,15 @@ class Enemy : public AnimatedObject
 		int _point;
 		std::vector<sf::Vector2f> _path;
 
+		Estate _eState;
 		EnemyType _type;
 
 		//moving
 		sf::Int32 _moveTime;
 
 		//Stats
-		int _initialHealth;
-		int _health;
+		float _initialHealth;
+		float _health;
 		int _speed;
 		int _spawnDelay;
 };

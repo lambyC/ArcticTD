@@ -3,16 +3,18 @@
 
 #include "StdAfx.h"
 #include "TextureManager.h"
-#include "VisibleObject.h"
+#include "AnimatedObject.h"
 #include "Enemy.h"
 
 
-class Tower : public VisibleObject
+class Tower : public AnimatedObject
 {
+	enum Tstate { Building, Waiting, Firing, Upgrading };
 	public:
-		/*
-		 *Base is timesd by 10 then the added type is plused( (B * 10) + 1 )
+		/*For upgraded towers
+		 *Base is *10 then the added type is plused( (B * 10) + 1 )
 		 */
+		
 		enum TowerType
 		{
 			Dmg=1, DmgDmg=11, DmgSpd=12, DmgBnc=13,
@@ -35,7 +37,6 @@ class Tower : public VisibleObject
 		//checkers
 		bool isPlaced() { return _isPlaced; };
 		bool isFiring() { return _isFiring; };
-		bool isInRange();
 
 		float getRadius() { return _radius; };
 		float getDmg() { return _dmg; };
@@ -44,9 +45,10 @@ class Tower : public VisibleObject
 		bool _isPlaced;
 		bool _isFiring;
 
+		Tstate _tState;
+
 		//Time to determine firerate
 		sf::Int32 _fireTime;
-		sf::Int32 _frameTime;
 
 		//Stats
 		float _radius;

@@ -83,11 +83,6 @@ vector<int> Wave::loadWaveSpawnVec(const int& key)
 					i = j;
 				}
 			}
-			typedef vector<int>::size_type it;
-			for(it i = 0; i != retVec.size();i++){
-				cout << retVec[i] << ",";
-			}
-			putchar('\n');
 			return retVec;
 		}
 	}
