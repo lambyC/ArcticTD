@@ -30,7 +30,11 @@ class Enemy : public AnimatedObject
 
 
 		void damage(int);
+		void preDamage(int);
+
 		int getSpawnDelay() { return _spawnDelay; };
+		int getHealth() { return _health; };
+		int getPreHealth() { return _preHealth; };
 
 	private:
 		//moving direction, to point in vector path;
@@ -46,6 +50,7 @@ class Enemy : public AnimatedObject
 		//Stats
 		float _initialHealth;
 		float _health;
+		float _preHealth;
 		int _speed;
 		int _spawnDelay;
 };

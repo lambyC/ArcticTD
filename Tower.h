@@ -2,7 +2,6 @@
 #define GUARD_TOWER_H
 
 #include "StdAfx.h"
-#include "TextureManager.h"
 #include "AnimatedObject.h"
 #include "Enemy.h"
 
@@ -11,7 +10,8 @@ class Tower : public AnimatedObject
 {
 	enum Tstate { Building, Waiting, Firing, Upgrading };
 	public:
-		/*For upgraded towers
+		/*
+		 *For upgraded towers
 		 *Base is *10 then the added type is plused( (B * 10) + 1 )
 		 */
 		

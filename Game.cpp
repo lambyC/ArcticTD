@@ -44,18 +44,24 @@ void Game::start()
 	_gTime = new sf::Clock();
 	_gameState = Playing;
 
+	//set player stats
+	_money = 100;
+	_strMoney = getStrMoney();
+	_life = 100;
+	_strLife = getStrLife();
+
 	//Buttons creation start
-	Button* jonesB = new Button(Button::Jones);
+	ButtonTower* jonesB = new ButtonTower(Button::Jones, 50);
 	jonesB->load(_textures->getTexture("buttons.png"), sf::IntRect(0, 200, 200, 40));
 	jonesB->setPosition(816, 340);
 	_buttonManager->add("jonesB", jonesB);
 
-	Button* krosB = new Button(Button::Kros);
+	ButtonTower* krosB = new ButtonTower(Button::Kros, 75);
 	krosB->load(_textures->getTexture("buttons.png"), sf::IntRect(0, 160, 200, 40));
 	krosB->setPosition(816, 280);
 	_buttonManager->add("krosB", krosB);
 
-	Button* felixB = new Button(Button::Felix);
+	ButtonTower* felixB = new ButtonTower(Button::Felix, 100);
 	felixB->load(_textures->getTexture("buttons.png"), sf::IntRect(0, 120, 200, 40));
 	felixB->setPosition(816, 220);
 	_buttonManager->add("felixB", felixB);
@@ -72,6 +78,13 @@ void Game::start()
 
 	Text* levelInfo = new Text(_wave->_strLevel, sf::Vector2f(950, 450));
 	_textManager->add("level", levelInfo);
+
+
+	Text* lifeInfo = new Text(_strLife, sf::Vector2f(540, 660));
+	_textManager->add("life", lifeInfo);
+
+	Text* moneyInfo = new Text(_strMoney, sf::Vector2f(540, 690));
+	_textManager->add("money", moneyInfo);
 	//Text creation end
 
 	//Wave timer
@@ -93,7 +106,6 @@ void Game::start()
 		{
 		//Pause game if not in playing state
 		if(_gameState == Playing){
-
 
 			handle_events();
 
@@ -146,11 +158,19 @@ void Game::update_turret()
 		sf::Vector2f pos = iter->second->getPosition();
 		VisibleObject* result = _enemyManager->inRadiusAll(pos.x, pos.y, ((Tower*)iter->second)->getRadius());
 		if(result != NULL){
-			if(((Tower*)iter->second)->isPlaced()){
-				if(!((Tower*)iter->second)->isFiring()){
-					((Tower*)iter->second)->fire(_gTime->getElapsedTime());
-					createProjectile(*((Tower*)iter->second), (Enemy*)result);
+			//check that enemy isnt going to die before shot is fired
+			if(((Enemy*)result)->getPreHealth() > 0){
+				//check tower isnt in the progress of being placed
+				if(((Tower*)iter->second)->isPlaced()){
+					//check tower isnt already shooting/reloading
+					if(!((Tower*)iter->second)->isFiring()){
+						((Tower*)iter->second)->fire(_gTime->getElapsedTime());
+						createProjectile(*((Tower*)iter->second), (Enemy*)result);
+					}
 				}
+			}
+			else{
+				continue;
 			}
 		}
 	}
@@ -200,20 +220,47 @@ void Game::handle_events()
 			//Buttons pressed
 			if(event.type == sf::Event::MouseButtonPressed){
 				if(_targetButton != NULL){
-					if(_targetButton->_action == Button::Start){
+					if(_targetButton->getAction() == Button::Start){
 						_wave->start();
 						_buttonManager->getObject("startB")->
 							setTextureRect(sf::IntRect(0, 240+54, 179, 54));
+						break;
 					}
 					else {
-						if(_targetButton->_action != Button::Start){
-							string key = createTower((int)_targetButton->_action);
-							_holdingTower = (Tower*)_towerManager->getObject(key);
-							_playerState = Game::HoldingTower;
-						}
+						if(_targetButton->getAction() != Button::Start){
+							int cost = ((ButtonTower*)_targetButton)->getCost();
+							if(_money >= cost) {
+								_money -= cost;
+								_strMoney = getStrMoney();
 
+								string key = createTower((int)_targetButton->getAction());
+								_holdingTower = (Tower*)_towerManager->getObject(key);
+								_playerState = Game::HoldingTower;
+							}
+						}
 					}
 				}
+				VisibleObject* result = _towerManager->inSpriteAll(event.mouseButton.x, event.mouseButton.y);
+				if(result != NULL){
+					_targetTower = (Tower*)result;
+					_playerState = Targeting;
+				}
+			}
+			break;
+		}
+		case Targeting :
+		{
+			if(event.type == sf::Event::KeyPressed){
+				if(event.key.code == sf::Keyboard::Escape){
+					_targetTower = NULL;
+					_playerState = Game::DoingNothing;
+					break;
+				}
+			}
+			if(event.type == sf::Event::MouseButtonPressed){
+				_targetTower = NULL;
+				_playerState = Game::DoingNothing;
+				break;
 			}
 			break;
 		}
@@ -256,6 +303,8 @@ void Game::draw_game(sf::RenderWindow& rw)
 			_towerManager->drawAll(rw);
 			_projectileManager->drawAll(rw);
 
+			draw_radius(rw);
+
 			_ui->draw(rw);
 
 			_buttonManager->drawAll(rw);
@@ -270,6 +319,27 @@ void Game::draw_game(sf::RenderWindow& rw)
 		case Exiting : { break; }
 	}
 };
+
+void Game::draw_radius(sf::RenderWindow& rw)
+{
+	for(auto iter = _towerManager->begin(); iter != _towerManager->end(); iter++){
+		if(iter->second != NULL){
+			if(!((Tower*)iter->second)->isPlaced()
+					|| ((Tower*)iter->second) == _targetTower)
+			{
+				sf::Vector2f pos = iter->second->getPosition();
+				float r = ((Tower*)iter->second)->getRadius();
+				sf::CircleShape rc(r);
+				sf::Vector2f npos(pos.x - r, pos.y - r);
+				rc.setPosition(npos);
+				rc.setOutlineThickness(1);
+				rc.setFillColor(sf::Color(0,0,0,0));
+				rc.setOutlineColor(sf::Color(0,0,0));
+				rw.draw(rc);
+			}
+		}
+	}
+}
 
 string Game::createEnemy()
 {
@@ -304,6 +374,8 @@ string Game::createProjectile(Tower& T, Enemy* E)
 	Projectile* pr = new Projectile(key, *_textures , T, E, _gTime->getElapsedTime());
 	pr->setCenterOrigin();
 	_projectileManager->add(key, pr);
+
+	E->preDamage(pr->getDmg());
 	return key;
 }
 

@@ -139,6 +139,7 @@ void Enemy::loadEnemyStatsFromFile(const EnemyType& type)
 			
 			_health = stats[0];
 			_initialHealth = stats[0];
+			_preHealth = stats[0];
 			_speed = stats[1];
 			_spawnDelay = stats[2];
 
@@ -170,10 +171,11 @@ void Enemy::loadEnemyTextureFromFile(TextureManager& textures)
 void Enemy::damage(int dmg)
 {
 	_health -= dmg;
-	if(_health <= 0)
-	{
-		
-	}
+}
+
+void Enemy::preDamage(int dmg)
+{
+	_preHealth -= dmg;
 }
 
 void Enemy::setSpawnLocation()

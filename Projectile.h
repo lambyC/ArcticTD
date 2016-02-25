@@ -15,9 +15,8 @@ class Projectile : public AnimatedObject
 
 		void update(sf::Time);
 		void move();
-		void explode();
-
-
+		
+		int getDmg() { return _dmg; };
 	private:
 		ProjState _pState;
 

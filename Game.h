@@ -5,7 +5,7 @@
 #include "VisibleObject.h"
 #include "ObjectManager.h"
 #include "TextureManager.h"
-#include "Button.h"
+#include "ButtonTower.h"
 #include "Wave.h"
 #include "Text.h"
 #include "TextManager.h"
@@ -20,7 +20,7 @@ class Game
 		~Game();
 
 		enum GameState { Uninitialized, MenuScreen, Playing, Exiting};
-		enum PlayerState { HoldingTower, DoingNothing };
+		enum PlayerState { HoldingTower, DoingNothing, Targeting };
 
 		void start();
 
@@ -29,6 +29,7 @@ class Game
 		void update_turret();
 		void update_game();
 		void draw_game(sf::RenderWindow&);
+		void draw_radius(sf::RenderWindow&);
 
 		std::string createEnemy();
 		std::string createTower(int);
@@ -36,6 +37,13 @@ class Game
 
 
 		bool isExiting(){ return _isExiting; };
+
+		void buy(int cost) { _money -= cost; };
+		int getMoney() { return _money; };
+		std::string getStrMoney() { return std::to_string(_money); };
+
+		int getLife() { return _life; };
+		std::string getStrLife() { return std::to_string(_life); };
 
 		//clocks
 		sf::Clock* _gTime;
@@ -74,9 +82,16 @@ class Game
 		GameState _gameState;
 		PlayerState _playerState;
 
+		//Player stats and str equivalent
+		int _money;
+		int _life;
+
+		std::string _strMoney;
+		std::string _strLife;
 
 		//Player targets
 		Button* _targetButton;
+		Tower* _targetTower;
 		Tower* _holdingTower;
 
 		//TODO make conf file reader for the path, depending on map chosen

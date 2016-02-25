@@ -1,4 +1,4 @@
-#health, fire rate, range, max number of frames, shot disposition
-1=10,500,100,8
-2=10,1000,100,6
-3=10,300,100,8
+#health, fire rate, range, max number of frames, projectile type, shot disposition
+1=100,1500,100,8
+2=10,200,400,6
+3=10,300,100,5

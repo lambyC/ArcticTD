@@ -15,11 +15,11 @@ Projectile::Projectile(string key, TextureManager& textures, Tower& tower , Enem
 	_isRight = false;
 	_frameRow = First;
 
-	load(textures.getTexture("red_bullet.png"));
+	load(textures.getTexture("red_bulletx2.png"));
 
 	
-	_size = sf::IntRect(0,0,16,16);
-	_frame = sf::IntRect(0,0,16,16);
+	_size = sf::IntRect(0,0,32,32);
+	_frame = _size;
 
 	_movementTime = time.asMilliseconds();
 	setFrameTime(time.asMilliseconds());
@@ -89,8 +89,3 @@ void Projectile::move()
 	_sprite.setPosition(nx, ny);
 }
 
-void Projectile::explode()
-{
-
-
-}
