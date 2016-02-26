@@ -9,7 +9,7 @@ Enemy::Enemy(EnemyType type, TextureManager& textures,const string& key, sf::Tim
 {
 	_key = key;
 	_isAlive = true;
-	_maxFrames = 2;
+	_maxFrames = 3;
 	_isRight = false;
 
 	loadEnemyStatsFromFile(type);

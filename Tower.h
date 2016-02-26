@@ -14,7 +14,6 @@ class Tower : public AnimatedObject
 		 *For upgraded towers
 		 *Base is *10 then the added type is plused( (B * 10) + 1 )
 		 */
-		
 		enum TowerType
 		{
 			Dmg=1, DmgDmg=11, DmgSpd=12, DmgBnc=13,
@@ -30,9 +29,8 @@ class Tower : public AnimatedObject
 		void loadFromBaseType(TextureManager& textures);
 		void setStatsFromType(int);
 		void place() { _isPlaced = true; };
+		void place(float x, float y) { setPosition(x, y); _isPlaced = true; };
 		void placing(sf::RenderWindow&);
-
-		TowerType getNewTowerType(TowerType base, TowerType upg);
 
 		//checkers
 		bool isPlaced() { return _isPlaced; };
@@ -41,6 +39,8 @@ class Tower : public AnimatedObject
 		float getRadius() { return _radius; };
 		float getDmg() { return _dmg; };
 
+		int getTypeInt() { return (int)_type;};
+		TowerType getType() { return _type;};
 	private:
 		bool _isPlaced;
 		bool _isFiring;
@@ -61,5 +61,4 @@ class Tower : public AnimatedObject
 		//projectile info
 		int _shotNr;
 };
-
 #endif

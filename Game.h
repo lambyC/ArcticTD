@@ -33,6 +33,7 @@ class Game
 
 		std::string createEnemy();
 		std::string createTower(int);
+		std::string upgradeTower(Tower*, Tower*);
 		std::string createProjectile(Tower&, Enemy*);
 
 

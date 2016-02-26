@@ -136,9 +136,5 @@ void Tower::setStatsFromType(int type)
 	}
 }
 
-Tower::TowerType Tower::getNewTowerType(TowerType base, TowerType upg)
-{
-	return (TowerType)((base * 10) + upg);
-}
 
 

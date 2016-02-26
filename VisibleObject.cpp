@@ -77,6 +77,7 @@ sf::Vector2f VisibleObject::getPosition()
 	return _sprite.getPosition();
 }
 
+
 sf::Vector2f VisibleObject::getCenterPosition()
 {
 	sf::IntRect rec = _sprite.getTextureRect();

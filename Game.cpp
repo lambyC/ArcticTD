@@ -45,7 +45,7 @@ void Game::start()
 	_gameState = Playing;
 
 	//set player stats
-	_money = 100;
+	_money = 1000;
 	_strMoney = getStrMoney();
 	_life = 100;
 	_strLife = getStrLife();
@@ -80,10 +80,10 @@ void Game::start()
 	_textManager->add("level", levelInfo);
 
 
-	Text* lifeInfo = new Text(_strLife, sf::Vector2f(540, 660));
+	Text* lifeInfo = new Text(_strLife, sf::Vector2f(620, 659));
 	_textManager->add("life", lifeInfo);
 
-	Text* moneyInfo = new Text(_strMoney, sf::Vector2f(540, 690));
+	Text* moneyInfo = new Text(_strMoney, sf::Vector2f(620, 695));
 	_textManager->add("money", moneyInfo);
 	//Text creation end
 
@@ -149,7 +149,6 @@ void Game::update_wave()
 			_wave->stop();
 		}
 	}
-
 }
 
 void Game::update_turret()
@@ -190,100 +189,112 @@ void Game::handle_events()
 {
 	sf::Event event;
 	while(_mainWindow.pollEvent(event)){
-
-	//event handling irrespective of _playerState
-	if(event.type == sf::Event::KeyPressed){
-		if(event.key.code == sf::Keyboard::M){
-			_gameState = MenuScreen;
-		}
-	}
-	switch(_playerState)
-	{
-		case DoingNothing :
-		{
-			if(event.type == sf::Event::MouseMoved){
-				//Check if button has mouse hovering over it
-				//change colour if true, change back if not
-				if(_targetButton != NULL){
-					if(_targetButton->inSprite(event.mouseMove.x, event.mouseMove.y) == false)
-						_targetButton->changeColour(sf::Color(255, 255, 255));
-				}
-				VisibleObject* result = _buttonManager->inSpriteAll(event.mouseMove.x, event.mouseMove.y);
-				if(result != NULL){
-					_targetButton = (Button*) result;
-					_targetButton->changeColour(sf::Color(20, 255, 255));
-				}
-				else{
-					_targetButton = NULL;
-				}
+		//event handling irrespective of _playerState
+		if(event.type == sf::Event::KeyPressed){
+			if(event.key.code == sf::Keyboard::M){
+				_gameState = MenuScreen;
 			}
-			//Buttons pressed
-			if(event.type == sf::Event::MouseButtonPressed){
-				if(_targetButton != NULL){
-					if(_targetButton->getAction() == Button::Start){
-						_wave->start();
-						_buttonManager->getObject("startB")->
-							setTextureRect(sf::IntRect(0, 240+54, 179, 54));
-						break;
+		}
+		switch(_playerState)
+		{
+			case DoingNothing :
+			{
+				if(event.type == sf::Event::MouseMoved){
+					//Check if button has mouse hovering over it
+					//change colour if true, change back if not
+					if(_targetButton != NULL){
+						if(_targetButton->inSprite(event.mouseMove.x, event.mouseMove.y) == false)
+							_targetButton->changeColour(sf::Color(255, 255, 255));
 					}
-					else {
-						if(_targetButton->getAction() != Button::Start){
-							int cost = ((ButtonTower*)_targetButton)->getCost();
-							if(_money >= cost) {
-								_money -= cost;
-								_strMoney = getStrMoney();
+					VisibleObject* result = _buttonManager->inSpriteAll(event.mouseMove.x, event.mouseMove.y);
+					if(result != NULL){
+						_targetButton = (Button*) result;
+						_targetButton->changeColour(sf::Color(20, 255, 255));
+					}
+					else{
+						_targetButton = NULL;
+					}
+				}
+				//Buttons pressed
+				if(event.type == sf::Event::MouseButtonPressed){
+					if(_targetButton != NULL){
+						if(_targetButton->getAction() == Button::Start){
+							_wave->start();
+							_buttonManager->getObject("startB")->
+								setTextureRect(sf::IntRect(0, 240+54, 179, 54));
+							break;
+						}
+						else {
+							if(_targetButton->getAction() != Button::Start){
+								int cost = ((ButtonTower*)_targetButton)->getCost();
+								if(_money >= cost) {
+									_money -= cost;
+									_strMoney = getStrMoney();
 
-								string key = createTower((int)_targetButton->getAction());
-								_holdingTower = (Tower*)_towerManager->getObject(key);
-								_playerState = Game::HoldingTower;
+									string key = createTower((int)_targetButton->getAction());
+									_holdingTower = (Tower*)_towerManager->getObject(key);
+									_playerState = Game::HoldingTower;
+								}
 							}
 						}
 					}
+					VisibleObject* result = _towerManager->inSpriteAll(event.mouseButton.x, event.mouseButton.y);
+					if(result != NULL){
+						_targetTower = (Tower*)result;
+						_playerState = Targeting;
+					}
 				}
-				VisibleObject* result = _towerManager->inSpriteAll(event.mouseButton.x, event.mouseButton.y);
-				if(result != NULL){
-					_targetTower = (Tower*)result;
-					_playerState = Targeting;
-				}
+				break;
 			}
-			break;
-		}
-		case Targeting :
-		{
-			if(event.type == sf::Event::KeyPressed){
-				if(event.key.code == sf::Keyboard::Escape){
+			case Targeting :
+			{
+				if(event.type == sf::Event::KeyPressed){
+					if(event.key.code == sf::Keyboard::Escape){
+						_targetTower = NULL;
+						_playerState = Game::DoingNothing;
+						break;
+					}
+				}
+				if(event.type == sf::Event::MouseButtonPressed){
 					_targetTower = NULL;
 					_playerState = Game::DoingNothing;
 					break;
 				}
-			}
-			if(event.type == sf::Event::MouseButtonPressed){
-				_targetTower = NULL;
-				_playerState = Game::DoingNothing;
 				break;
 			}
-			break;
-		}
-		case HoldingTower :
-		{
-			if(event.type == sf::Event::KeyPressed){
-				if(event.key.code == sf::Keyboard::Escape){
-					_towerManager->remove(_holdingTower->getKey());
-					_holdingTower = NULL;
-					_playerState = Game::DoingNothing;
-					break;
+			case HoldingTower :
+			{
+				if(event.type == sf::Event::KeyPressed){
+					if(event.key.code == sf::Keyboard::Escape){
+						_towerManager->remove(_holdingTower->getKey());
+						_holdingTower = NULL;
+						_playerState = Game::DoingNothing;
+
+						break;
+					}
 				}
-			}
-			if(event.type == sf::Event::MouseButtonPressed){
-				if(_map->inSprite(event.mouseButton.x, event.mouseButton.y)){
-					_holdingTower->place();
-					_holdingTower = NULL;
-					_targetButton->changeColour(sf::Color(255,255,255));
-					_playerState = Game::DoingNothing;
+				if(event.type == sf::Event::MouseButtonPressed){
+					Tower* result = (Tower*)_towerManager->inSpriteAll(event.mouseButton.x, event.mouseButton.y);
+					if(result != NULL && result != _holdingTower){
+						string key = upgradeTower(result, _holdingTower);
+						Tower* tower = (Tower*)_towerManager->getObject(key);
+						sf::Vector2f pos = result->getPosition();
+						tower->place(pos.x, pos.y);
+						_holdingTower = NULL;
+						_playerState = Game::DoingNothing;
+					}
+					else{
+						if(_map->inSprite(event.mouseButton.x, event.mouseButton.y)){
+							_holdingTower->place();
+							_holdingTower = NULL;
+
+							_targetButton->changeColour(sf::Color(255,255,255));
+							_playerState = Game::DoingNothing;
+						}
+					}
 				}
+				break;
 			}
-		}
-		break;
 		}
 	}
 };
@@ -366,6 +377,16 @@ string Game::createTower(int i)
 	tower->setCenterOrigin();
 	_towerManager->add(key, tower);
 	return key;
+}
+
+string Game::upgradeTower(Tower* oldT, Tower* newT)
+{
+	int upgT = (oldT->getTypeInt()) * 10 + newT->getTypeInt();
+
+	_towerManager->remove(oldT->getKey());
+	_towerManager->remove(newT->getKey());
+
+	return createTower(upgT);
 }
 
 string Game::createProjectile(Tower& T, Enemy* E)
