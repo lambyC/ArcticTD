@@ -14,7 +14,7 @@ class Wave
 		void start();
 		void stop();
 		void prepare_next_wave();
-		void setNextSpawn(const int&);
+		void setNextSpawn(const float&);
 
 		bool isOn() { return _isOn; };
 		bool isSpawnRead();
@@ -27,6 +27,7 @@ class Wave
 		std::vector<int> loadWaveSpawnVec(const int&);
 
 		//get Info for game
+		int getLevel() { return _level; };
 		std::string getTimestr();
 		std::string getLevelstr();
 
@@ -38,7 +39,7 @@ class Wave
 		bool _isOn;
 
 		int _time;
-		int _timeToNextSpawn;
+		float _timeToNextSpawn;
 
 		int _level;
 		//holds all the enemy types to be spawned in order

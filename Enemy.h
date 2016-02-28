@@ -32,7 +32,7 @@ class Enemy : public AnimatedObject
 		void damage(int);
 		void preDamage(int);
 
-		int getSpawnDelay() { return _spawnDelay; };
+		float getSpawnDelay() { return _spawnDelay; };
 		int getHealth() { return _health; };
 		int getPreHealth() { return _preHealth; };
 
@@ -51,8 +51,8 @@ class Enemy : public AnimatedObject
 		float _initialHealth;
 		float _health;
 		float _preHealth;
-		int _speed;
-		int _spawnDelay;
+		float _speed;
+		float _spawnDelay;
 };
 
 #endif

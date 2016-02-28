@@ -12,6 +12,7 @@
 #include "Enemy.h"
 #include "Tower.h"
 #include "Projectile.h"
+#include "MenuScreen.h"
 
 class Game
 {
@@ -19,7 +20,7 @@ class Game
 		Game();
 		~Game();
 
-		enum GameState { Uninitialized, MenuScreen, Playing, Exiting};
+		enum GameState { Uninitialized, Menu, Playing, Exiting};
 		enum PlayerState { HoldingTower, DoingNothing, Targeting };
 
 		void start();
@@ -36,6 +37,7 @@ class Game
 		std::string upgradeTower(Tower*, Tower*);
 		std::string createProjectile(Tower&, Enemy*);
 
+		void showMenu();
 
 		bool isExiting(){ return _isExiting; };
 

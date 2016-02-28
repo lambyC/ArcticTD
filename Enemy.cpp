@@ -41,39 +41,38 @@ void Enemy::update(sf::Time elapsedTime)
 	switch(_eState)
 	{
 		case Alive :
-			{
-				if(elapsedTime.asMilliseconds() > _moveTime){
-					move();
-					_moveTime += 40;
-				}
-				if(elapsedTime.asMilliseconds() > getFrameTime()){
-					nextFrame(_speed * 10);
-				}
-				if(_health <= 0){
-					_isAlive = false;
-				}
-				//make more red the more dmg'd the enemy is
-				float procent = _health / _initialHealth;
-				float c = 255 * procent;
-
-				_sprite.setColor(sf::Color(255, c, c));
-
-				break;
+		{
+			if(elapsedTime.asMilliseconds() > _moveTime){
+				move();
+				_moveTime += 40;
 			}
+			if(elapsedTime.asMilliseconds() > getFrameTime()){
+				nextFrame(_speed * 10);
+			}
+			if(_health <= 0){
+				_isAlive = false;
+			}
+			//make more red the more dmg'd the enemy is
+			float procent = _health / _initialHealth;
+			float c = 255 * procent;
+
+			_sprite.setColor(sf::Color(255, c, c));
+
+			break;
+		}
 		case Action :
-			{
+		{
 
-				break;
-			}
+			break;
+		}
 		case Dying :
-			{
-				if(elapsedTime.asMilliseconds() > getFrameTime()){
-					nextFrame(_speed * 10);
-				}
-				break;
+		{
+			if(elapsedTime.asMilliseconds() > getFrameTime()){
+				nextFrame(_speed * 10);
 			}
+			break;
+		}
 	}
-
 }
 
 void Enemy::move()

@@ -41,7 +41,7 @@ void Wave::prepare_next_wave()
 	_timeToNextSpawn = 5;
 }
 
-void Wave::setNextSpawn(const int& i)
+void Wave::setNextSpawn(const float& i)
 {
 	_timeToNextSpawn += i;
 	_spawnNr += 1;

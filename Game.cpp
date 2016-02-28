@@ -42,7 +42,7 @@ void Game::start()
 	_ui->load(_textures->getTexture("arctic_map_ui.png"));
 
 	_gTime = new sf::Clock();
-	_gameState = Playing;
+	_gameState = Menu;
 
 	//set player stats
 	_money = 1000;
@@ -86,6 +86,11 @@ void Game::start()
 	Text* moneyInfo = new Text(_strMoney, sf::Vector2f(620, 695));
 	_textManager->add("money", moneyInfo);
 	//Text creation end
+	
+	//Music
+	sf::Music mainTheme, bossTheme;
+	mainTheme.openFromFile("resources/music/Cold_beyond_any.wav");
+	bossTheme.openFromFile("resources/music/Between_the_giant_toes.wav");
 
 	//Wave timer
 	sf::Int32 waveTicReady = _gTime->getElapsedTime().asMilliseconds();
@@ -111,6 +116,20 @@ void Game::start()
 
 			if(_holdingTower != NULL){
 				_holdingTower->placing(_mainWindow);
+			}
+			//Decide music to be playing
+			if(_wave->getLevel() % 5 == 0 && _wave->getLevel() != 0){
+				if(mainTheme.getStatus() == sf::Music::Playing){
+					mainTheme.stop();
+				}
+				if(!(bossTheme.getStatus() == sf::Music::Playing)){
+					bossTheme.play();
+				}
+			}
+			else{
+				if(!(mainTheme.getStatus() == sf::Music::Playing)){
+					mainTheme.play();
+				}
 			}
 
 			//tic should only occure each second( 1000 milliseconds)
@@ -192,7 +211,7 @@ void Game::handle_events()
 		//event handling irrespective of _playerState
 		if(event.type == sf::Event::KeyPressed){
 			if(event.key.code == sf::Keyboard::M){
-				_gameState = MenuScreen;
+				_gameState = Menu;
 			}
 		}
 		switch(_playerState)
@@ -278,8 +297,13 @@ void Game::handle_events()
 					if(result != NULL && result != _holdingTower){
 						string key = upgradeTower(result, _holdingTower);
 						Tower* tower = (Tower*)_towerManager->getObject(key);
+
 						sf::Vector2f pos = result->getPosition();
 						tower->place(pos.x, pos.y);
+
+						_towerManager->remove(result->getKey());
+						_towerManager->remove(_holdingTower->getKey());
+
 						_holdingTower = NULL;
 						_playerState = Game::DoingNothing;
 					}
@@ -323,11 +347,16 @@ void Game::draw_game(sf::RenderWindow& rw)
 
 			break;
 		}
-		case MenuScreen :
+		case Menu :
 		{
-
+			showMenu();
+			break;
 		}
-		case Exiting : { break; }
+		case Exiting :
+		{
+			_isExiting = true;
+			break;
+		}
 	}
 };
 
@@ -350,6 +379,21 @@ void Game::draw_radius(sf::RenderWindow& rw)
 			}
 		}
 	}
+}
+
+void Game::showMenu()
+{
+	MenuScreen menuScreen(_textures);
+	MenuScreen::MenuResult result = menuScreen.show_choose(_mainWindow);
+
+	if(result == MenuScreen::Play){
+		_gameState = Game::Playing;
+	}
+	if(result == MenuScreen::Options){
+	}
+	if(result == MenuScreen::Exit)
+		_gameState = Game:: Exiting;
+
 }
 
 string Game::createEnemy()
@@ -383,9 +427,6 @@ string Game::upgradeTower(Tower* oldT, Tower* newT)
 {
 	int upgT = (oldT->getTypeInt()) * 10 + newT->getTypeInt();
 
-	_towerManager->remove(oldT->getKey());
-	_towerManager->remove(newT->getKey());
-
 	return createTower(upgT);
 }
 
@@ -399,6 +440,10 @@ string Game::createProjectile(Tower& T, Enemy* E)
 	E->preDamage(pr->getDmg());
 	return key;
 }
+
+
+
+
 
 
 
